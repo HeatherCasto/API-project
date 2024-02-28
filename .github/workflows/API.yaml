@@ -1,0 +1,104 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Movie Ticket Booking System
+  description: |
+    This OpenAPI specification defines the Seat Selection Service for the Movie Ticket Booking System. The service allows customers to view available seats for a specific movie and showtime, reserve a seat, and cancel a seat reservation.
+
+paths:
+  /seat-selection:
+    get:
+      summary: Get Available Seats
+      parameters:
+        - name: movie
+          in: query
+          description: The identifier for the movie. Used to retrieve available seats for the specified movie.
+          required: true
+          schema:
+            type: string
+        - name: showtime
+          in: query
+          description: The identifier for the showtime. Used to retrieve available seats for the specified showtime.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response with available seats for the specified movie and showtime.
+          content:
+            application/json:
+              example: {"status": "success", "available_seats": ["A1", "A2", "B3"]}
+        '404':
+          description: Movie or showtime not found. Indicates that the specified movie or showtime does not exist in the system.
+          content:
+            application/json:
+              example: {"status": "error", "message": "Movie or showtime not found."}
+
+    post:
+      summary: Reserve Seat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                movie:
+                  type: string
+                  description: The identifier for the movie. Used to associate the seat reservation with a specific movie.
+                showtime:
+                  type: string
+                  description: The identifier for the showtime. Used to associate the seat reservation with a specific showtime.
+                selected_seat:
+                  type: string
+                  description: The selected seat to be reserved by the customer.
+      responses:
+        '200':
+          description: Successful seat reservation. Indicates that the selected seat has been successfully reserved for the specified movie and showtime.
+          content:
+            application/json:
+              example: {"status": "success", "message": "Seat A1 reserved successfully."}
+        '400':
+          description: Invalid request or seat already reserved. Indicates that the request is malformed or the selected seat is already reserved by another customer.
+          content:
+            application/json:
+              example: {"status": "error", "message": "Invalid request or seat already reserved."}
+
+    delete:
+      summary: Cancel a Seat Reservation
+      parameters:
+        - name: movie
+          in: query
+          description: The identifier for the movie. Used to associate the seat cancellation with a specific movie.
+          required: true
+          schema:
+            type: string
+        - name: showtime
+          in: query
+          description: The identifier for the showtime. Used to associate the seat cancellation with a specific showtime.
+          required: true
+          schema:
+            type: string
+        - name: reserved_seat
+          in: query
+          description: The seat reservation to be canceled by the customer.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Seat reservation cancellation successful. Indicates that the specified seat reservation has been successfully canceled.
+          content:
+            application/json:
+              example: {"status": "success", "message": "Seat reservation cancellation successful."}
+        '404':
+          description: Movie, showtime, or seat not found. Indicates that the specified movie, showtime, or seat does not exist in the system.
+          content:
+            application/json:
+              example: {"status": "error", "message": "Movie, showtime, or seat not found."}
+        '500':
+          description: Internal server error. Indicates an unexpected error on the server side.
+          content:
+            application/json:
+              example: {"status": "error", "message": "Internal server error."}
+
